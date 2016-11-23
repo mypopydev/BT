@@ -1,0 +1,182 @@
+1. bthci_acl.src.bd_addr == 8c:de:52:fb:c8:ce ||  bthci_acl.dst.bd_addr == 8c:de:52:fb:c8:ce
+
+2. SPP Protrol
+
+3. RFCOMM
+   DLCI: Data Link Connect Identifier
+
+   Frame Type:
+   SABM
+   UA
+   DM
+   DISC
+   UIH
+
+4. SDP
+   - SDP只是提供侦测service以及特性的方法，但不提供如何使用这些service的方法
+   - SDP提供了一种用于发现服务及这些可用服务属性的方法，但它不提供利用这些服务的机制。
+   - SDP中的每一个Service用Service Record来表示（具有唯一的32bit的Handle)，
+     每一个Service Record由若干Service Attribute组成，Service Attribute由Attribute ID和Attribute Valuel两个部分。
+   
+
+其架构是Client-Server模式
+
+5. L2CAP
+   PSM: Protocol and Service Multiplexers (PSMs)
+   Protocol 	     	PSM 	Reference
+   SDP 			0x0001 	See Bluetooth Service Discovery Protocol (SDP), Bluetooth SIG
+   RFCOMM 		0x0003 	See RFCOMM with TS 07.10, Bluetooth SIG
+   TCS-BIN 		0x0005 	See Bluetooth Telephony Control Specification / TCS Binary, Bluetooth SIG
+   TCS-BIN-CORDLESS 	0x0007 	See Bluetooth Telephony Control Specification / TCS Binary, Bluetooth SIG
+   BNEP 		0x000F 	See Bluetooth Network Encapsulation Protocol, Bluetooth SIG
+   HID_Control 		0x0011 	See Human Interface Device, Bluetooth SIG
+   HID_Interrupt 	0x0013 	See Human Interface Device, Bluetooth SIG
+   UPnP 		0x0015 	See [ESDP] , Bluetooth SIG
+   AVCTP 		0x0017 	See Audio/Video Control Transport Protocol, Bluetooth SIG
+   AVDTP 		0x0019 	See Audio/Video Distribution Transport Protocol, Bluetooth SIG
+   AVCTP_Browsing 	0x001B 	See Audio/Video Remote Control Profile, Bluetooth SIG
+   UDI_C-Plane 		0x001D 	See the Unrestricted Digital Information Profile [UDI], Bluetooth SIG
+   ATT 			0x001F 	See Bluetooth Core Specification.​​
+   ​3DSP 		0x0021​  See 3D Synchronization Profile, Bluetooth SIG.
+​   LE_PSM_IPSP 	​0x0023  ​See Internet Protocol Support Profile (IPSP), Bluetooth SIG
+   OTS  		0x0025 	See Object Transfer Service (OTS), Bluetooth SIG 
+
+   
+6. adb
+
+   a). adb devices
+   b). adb shell
+   c). adb pull /sdcard/Android/data/btsnoop_hci.log
+
+
+7. Tools
+   a). hcitool scan
+barry@barry-desktop:~/Sources$ sudo hcitool scan
+[sudo] password for barry: 
+Scanning ...
+	8C:DE:52:FB:C8:CE	RBP1601040168
+	18:3A:2D:2C:09:50	Popy Note4
+
+   b). sdptool records 8C:DE:52:FB:C8:CE
+barry@barry-desktop:~/Sources$ sudo sdptool records 8C:DE:52:FB:C8:CE
+Service RecHandle: 0x10001
+Service Class ID List:
+  "PnP Information" (0x1200)
+Protocol Descriptor List:
+  "L2CAP" (0x0100)
+    PSM: 1
+  "SDP" (0x0001)
+Language Base Attr List:
+  code_ISO639: 0x656e
+  encoding:    0x6a
+  base_offset: 0x100
+Profile Descriptor List:
+  "PnP Information" (0x1200)
+    Version: 0x0100
+
+Service Name: SerialPort
+Service RecHandle: 0x10007
+Service Class ID List:
+  "Serial Port" (0x1101)
+Protocol Descriptor List:
+  "L2CAP" (0x0100)
+  "RFCOMM" (0x0003)
+    Channel: 6   // Find the Channel 6
+Language Base Attr List:
+  code_ISO639: 0x656e
+  encoding:    0x6a
+  base_offset: 0x100
+Profile Descriptor List:
+  "Serial Port" (0x1101)
+    Version: 0x0100
+
+Service Name: Wireless iAP
+Service RecHandle: 0x1000f
+Service Class ID List:
+  UUID 128: 00000000-deca-fade-deca-deafdecacaff
+Protocol Descriptor List:
+  "L2CAP" (0x0100)
+  "RFCOMM" (0x0003)
+    Channel: 3
+Language Base Attr List:
+  code_ISO639: 0x656e
+  encoding:    0x6a
+  base_offset: 0x100
+
+   c). sudo rfcomm bind /dev/rfcomm0 8C:DE:52:FB:C8:CE 6
+
+https://github.com/denisigo/android-linux-bluetooth/blob/master/BluetoothClient.py
+
+http://www.denisigo.com/2014/08/example-of-bluetooth-communication-between-android-and-linux/
+  
+  8. SPP Client
+
+a). Discovering our service
+
+We will use Python and PySerial library to deal with serial ports. We 
+will use hcitool to discover Bluetooth devices, and sdptool to discover 
+some device’s services. We will also use rfcomm tool to bind particular 
+device’s RFCOMM channel to the virtual serial port. I hope you’re able 
+to install these tools by yourself. So, enable Bluetooth on your device 
+and enable device visibility for discovering. Now, let’s discover devices 
+from desktop using hsitool:
+
+$ hcitool scan
+
+Scanning ...
+  98:DD:D0:EA:62:4E Lenovo A369i
+
+Great, we have discovered our device and it has following MAC: 98:DD:D0:EA:62:4E. 
+Now, start our Android application and let’s discover Bluetooth services 
+of our device using its MAC:
+
+$ sdptool records 98:DD:D0:EA:62:4E
+
+....
+
+Service Name: TestService
+Service RecHandle: 0x10013
+Service Class ID List:
+  UUID 128: 00001101-0000-1000-8000-00805f9b34fb
+Protocol Descriptor List:
+  "L2CAP" (0x0100)
+  "RFCOMM" (0x0003)
+    Channel: 21
+
+Great, we have discovered our SPP service, take a look at Protocol Descriptor 
+List - that’s protocols our service is using, and there is RFCOMM one on 
+channel 21. So, it’s time to create our virtual serial port:
+
+$ sudo rfcomm bind /dev/rfcomm0 98:DD:D0:EA:62:4E 21
+
+Where /dev/rfcomm0 is the name of our virtual serial port device, 
+then go MAC address and port number. Now, it’s time to create our Python client!
+
+b). Python client
+
+- Create and open serial port:
+
+port = serial.Serial(port='/dev/rfcomm0', baudrate=921600, timeout=1)
+port.open()
+
+- Create and start reading thread:
+
+def readThread(port):
+  while True:
+    # Read some bytes available from port
+    bytes = port.read(1024)
+    # Decode them as a string
+    message = bytes.decode("utf-8")
+    if message:
+      print message
+
+thread.start_new_thread( readThread, ( port, ) )
+
+- And then take all from input and write to the port:
+
+while True:
+  inp = raw_input('>')
+  if len(inp):
+    port.write(inp)
+
+See full client source here. The end.

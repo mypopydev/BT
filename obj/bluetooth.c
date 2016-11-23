@@ -71,6 +71,55 @@ int str2uuid( const char *uuid_str, uuid_t *uuid )
     return 1;
 }
 
+void hexdump(void *buf, long size)
+{
+	char sz_buf[100];
+	long indent = 1;
+	long out_len, index, out_len2;
+	long rel_pos;
+	struct {
+		char *data;
+		unsigned long size;
+	} buff;
+	unsigned char *tmp,tmp_pos;
+	unsigned char *addr = (unsigned char *)buf;
+	
+	buff.data = (char *)addr;
+	buff.size = size;
+	
+	while (buff.size > 0) {
+		tmp      = (unsigned char *)buff.data;
+		out_len  = (int)buff.size;
+		if (out_len > 32)
+			out_len = 32;
+		
+		// create a 85-character formatted output line:
+		sprintf(sz_buf, "                              "
+			"                              "
+			"              [%08lX]", tmp-addr);
+		out_len2 = out_len;
+		
+		for (index=indent, rel_pos=0; out_len2; out_len2--,index += 2 ) {
+			tmp_pos = *tmp++;
+			sprintf(sz_buf + index, "%02X ", (unsigned short)tmp_pos);
+			if (!(++rel_pos & 3))     // extra blank after 4 bytes
+				index++;
+		}
+		
+		if (!(rel_pos & 3)) index--;
+		
+		sz_buf[index+1] = ' ';
+		
+		printf("%s\n", sz_buf);
+		
+		buff.data += out_len;
+		buff.size -= out_len;
+	}
+}
+
+char cmd1[] = {0xcc, 0x96, 0x02, 0x03, 0x01, 0x01, 0x00, 0x01};
+char cmd2[] = {0xcc, 0x96, 0x02, 0x03, 0x01, 0x02, 0x00, 0x02};
+
 int main(void)
 {
         int i, err, sock, dev_id = -1;
@@ -81,7 +130,7 @@ int main(void)
 	char name[248] = { 0 };
 	uuid_t uuid = { 0 };
 	// Change this to your apps UUID
-	char *uuid_str="66841278-c3d1-11df-ab31-001de000a901";
+	char *uuid_str="00001101-0000-1000-8000-00805f9b34fb";
 	uint32_t range = 0x0000ffff;
 	sdp_list_t *response_list = NULL, *search_list, *attrid_list;
 	int s, loco_channel = -1, status;
@@ -125,7 +174,7 @@ int main(void)
 			exit(1);
 		}
 
-		printf("No of resp %d\n",num_rsp);
+		printf("Num of resp %d\n", num_rsp);
 
 		for (i=0; i<num_rsp; i++) {
 			sdp_session_t *session;
@@ -136,7 +185,7 @@ int main(void)
 			if (hci_read_remote_name(sock, &(info+i)->bdaddr, sizeof(name),
                                                  name, 0) < 0)
                                 strcpy(name, "[unknown]");
-			printf("Found %s  %s, searching for the the desired service on it now\n",
+			printf("Found %s - %s, searching for the the desired service on it now\n",
                                addr, name);
 
 			// connect to the SDP server running on the remote machine
@@ -218,22 +267,29 @@ sdpconnect:
                             if (loco_channel > 0)
                                     break;
 			}
-			printf("No of Responses %d\n", responses);
+			printf("Num of Responses %d\n", responses);
 			if (loco_channel > 0 && foundit == 1) {
-				printf("Found service on this device, now gonna blast it with dummy data\n");
+				printf("Found service on this device, now send the cmd\n");
 				s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 				loc_addr.rc_family = AF_BLUETOOTH;
 				loc_addr.rc_channel = loco_channel;
 				loc_addr.rc_bdaddr = *(&(info+i)->bdaddr);
 				status = connect(s, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
-				if (status < 0) {
+				if (status < 0)
 					perror("uh oh");
-				}
+
+				status = write(s, cmd1, 8); /* FIXME */
+				usleep(100);
+				status = write(s, cmd2, 8); /* FIXME */
+				printf ("Wrote %d bytes\n", status);
+
+				char buf[128];
+				ssize_t len;
 				do {
-					status = write(s, "hello!", 6); /* FIXME */
-					printf ("Wrote %d bytes\n", status);
-					sleep(1);
-				} while (status > 0);
+					len = read(s, buf, 128);
+					printf ("read %d bytes\n", len);
+					hexdump(buf, len);
+				} while (len > 0);
 				close(s);
 				sdp_record_free(rec);
 			}
