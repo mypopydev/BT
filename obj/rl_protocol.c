@@ -53,6 +53,12 @@ static void build_decoding_table()
                 decoding_table[(unsigned char) encoding_table[i]] = i;
 }
 
+static void base64_cleanup()
+{
+        free(decoding_table);
+        decoding_table = NULL;
+}
+
 static unsigned char *base64_decode(const char *data,
                              uint32_t input_length,
                              uint32_t *output_length)
@@ -85,13 +91,8 @@ static unsigned char *base64_decode(const char *data,
                 if (j < *output_length) decoded_data[j++] = (triple >> 1 * 8) & 0xFF;
                 if (j < *output_length) decoded_data[j++] = (triple >> 0 * 8) & 0xFF;
         }
-
+        base64_cleanup();
         return decoded_data;
-}
-
-static void base64_cleanup()
-{
-        free(decoding_table);
 }
 
 /*
