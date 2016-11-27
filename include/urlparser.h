@@ -21,7 +21,7 @@
 	This library does not tend to work that stable nor does it fully implent the
 	standards described by IETF. For more information on the precise implentation of the
 	Hyper Text Transfer Protocol:
-	
+
 	http://www.ietf.org/rfc/rfc2616.txt
 */
 #ifndef URLPARSER_H_
@@ -29,18 +29,18 @@
 /*
 	Represents an url
 */
-struct parsed_url 
-{
-	char *uri;					/* mandatory */
-    char *scheme;               /* mandatory */
-    char *host;                 /* mandatory */
-	char *ip; 					/* mandatory */
-    char *port;                 /* optional */
-    char *path;                 /* optional */
-    char *query;                /* optional */
-    char *fragment;             /* optional */
-    char *username;             /* optional */
-    char *password;             /* optional */
+struct parsed_url{
+        char *uri;      /* mandatory */
+        char *scheme;   /* mandatory */
+        char *host;     /* mandatory */
+        char *ip;       /* mandatory */
+
+        char *port;     /* optional  */
+        char *path;     /* optional  */
+        char *query;    /* optional  */
+        char *fragment; /* optional  */
+        char *username; /* optional  */
+        char *password; /* optional  */
 };
 
 /*
@@ -52,7 +52,6 @@ void parsed_url_free(struct parsed_url *purl);
 	Retrieves the IP adress of a hostname
 */
 char* hostname_to_ip(char *hostname);
-
 
 /*
 	Check whether the character is permitted in scheme string
@@ -67,4 +66,3 @@ int is_scheme_char(int c);
 */
 struct parsed_url *parse_url(const char *url);
 #endif
-
