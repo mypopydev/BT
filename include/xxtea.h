@@ -16,8 +16,8 @@
 
 *************************************************************************/
 
-#ifndef XXTEA_H
-#define XXTEA_H
+#ifndef XXTEA_H_
+#define XXTEA_H_
 
 #include <stddef.h> /* for size_t & NULL declarations */
 #include <stdint.h>

@@ -24,14 +24,8 @@
 	
 	http://www.ietf.org/rfc/rfc2616.txt
 */
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-#ifdef __cplusplus
-	#include <locale>
-#endif
+#ifndef STRINTX_H_
+#define STRINGX_H_
 
 /*
 	Gets the offset of one string in another string
@@ -105,4 +99,4 @@ void encodeblock( unsigned char in[], char b64str[], int len );
 	Encodes a string with Base64
 */
 char* base64_encode(char *clrstr);
-
+#endif

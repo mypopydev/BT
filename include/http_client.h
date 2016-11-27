@@ -24,6 +24,8 @@
 
 	http://www.ietf.org/rfc/rfc2616.txt
 */
+#ifndef HTTP_CLIENT_H_
+#define HTTP_CLIENT_H_
 
 /*
 	Represents an HTTP html response
@@ -46,5 +48,5 @@ struct http_response *http_req(char *http_headers, struct parsed_url *purl);
 struct http_response *http_get(char *url, char *custom_headers);
 struct http_response *http_head(char *url, char *custom_headers);
 struct http_response *http_post(char *url, char *custom_headers, char *post_data);
-
+#endif
 

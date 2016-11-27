@@ -24,7 +24,8 @@
 	
 	http://www.ietf.org/rfc/rfc2616.txt
 */
-
+#ifndef URLPARSER_H_
+#define URLPARSER_H_
 /*
 	Represents an url
 */
@@ -65,4 +66,5 @@ int is_scheme_char(int c);
 	RFC 3986 -  http://www.ietf.org/rfc/rfc3986.txt
 */
 struct parsed_url *parse_url(const char *url);
+#endif
 

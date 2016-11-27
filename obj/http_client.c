@@ -24,8 +24,6 @@
 
   http://www.ietf.org/rfc/rfc2616.txt
 */
-
-#pragma GCC diagnostic ignored "-Wwrite-strings"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
