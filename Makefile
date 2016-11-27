@@ -7,10 +7,12 @@ LDIR =lib
 
 LIBS=-lm -lbluetooth
 
-_DEPS = bluetooth.h
+_DEPS = bluetooth.h xxtea.h urlencode.h rl_protocol.h stringx.h \
+	urlparser.h http_client.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = bluetooth.o 
+_OBJ = bluetooth.o xxtea.o urlencode.o rl_protocol.o stringx.o \
+	urlparser.o http_client.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 

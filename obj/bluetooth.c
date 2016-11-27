@@ -22,11 +22,11 @@ int str2uuid(const char *uuid_str, uuid_t *uuid)
 {
 	uint32_t uuid_int[4];
 	char *endptr;
-	
+
 	if (strlen(uuid_str) == 36) {
 		/* Parse uuid128 standard format: 12345678-9012-3456-7890-123456789012 */
 		char buf[9] = { 0 };
-		
+
 		if (uuid_str[8] != '-' && uuid_str[13] != '-' &&
 		    uuid_str[18] != '-'  && uuid_str[23] != '-') {
 			return 0;
@@ -47,7 +47,7 @@ int str2uuid(const char *uuid_str, uuid_t *uuid)
 		strncpy(buf+4, uuid_str+24, 4);
 		uuid_int[2] = htonl(strtoul(buf, &endptr, 16));
 		if (endptr != buf + 8) return 0;
-		
+
 		/* fourth 8-bytes */
 		strncpy(buf, uuid_str+28, 8);
 		uuid_int[3] = htonl(strtoul(buf, &endptr, 16));
@@ -67,7 +67,7 @@ int str2uuid(const char *uuid_str, uuid_t *uuid)
 	} else {
 		return 0;
 	}
-	
+
 	return 1;
 }
 
@@ -106,35 +106,35 @@ void hexdump(void *buf, long size)
 	} buff;
 	unsigned char *tmp,tmp_pos;
 	unsigned char *addr = (unsigned char *)buf;
-	
+
 	buff.data = (char *)addr;
 	buff.size = size;
-	
+
 	while (buff.size > 0) {
 		tmp      = (unsigned char *)buff.data;
 		out_len  = (int)buff.size;
 		if (out_len > 32)
 			out_len = 32;
-		
+
 		/* create a 85-character formatted output line: */
 		sprintf(sz_buf, "                              "
 			"                              "
 			"              [%08lX]", tmp-addr);
 		out_len2 = out_len;
-		
+
 		for (index=indent, rel_pos=0; out_len2; out_len2--,index += 2 ) {
 			tmp_pos = *tmp++;
 			sprintf(sz_buf + index, "%02X ", (unsigned short)tmp_pos);
 			if (!(++rel_pos & 3))     /* extra blank after 4 bytes */
 				index++;
 		}
-		
+
 		if (!(rel_pos & 3)) index--;
-		
+
 		sz_buf[index+1] = ' ';
-		
+
 		printf("%s\n", sz_buf);
-		
+
 		buff.data += out_len;
 		buff.size -= out_len;
 	}
