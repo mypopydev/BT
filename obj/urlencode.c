@@ -2,14 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
 #include "urlencode.h"
 
 /* note unicode support should happen upstream of this. */
-bool is_non_symbol(char c)
+static bool is_non_symbol(char c)
 {
         if(c == '\0') return 1; /* we want to write null regardless */
         int c_int = (int)c;
-        return (c_int >= 48 && c_int <= 57) || (c_int >= 65 && c_int <= 90) || (c_int >= 97 && c_int <= 122);
+        return (c_int >= 48 && c_int <= 57)
+            || (c_int >= 65 && c_int <= 90)
+            || (c_int >= 97 && c_int <= 122);
 }
 
 char *url_encode(const char *input)
