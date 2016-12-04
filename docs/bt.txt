@@ -180,3 +180,72 @@ while True:
     port.write(inp)
 
 See full client source here. The end.
+
+                                               Sys  Dia  Pulse
+AA96020F 0106000E 01010101 0100A600 75004F99   22.1 15.6 79
+AA96020F 0106000E 01010101 0100A700 82005474   22.2 17.3 84
+AA96020F 0106000E 01010101 0100A300 72005084   21.7 15.2 80
+AA96020F 0106000E 01010101 0100AD00 9100566F   23.0 19.3 86
+AA960203 01070205                              ERROR
+
+Pulse        Sys                          Dia
+4F => 79     A6(166) => x 4 / 30  = 22.1  75(117) => x 2 / 15 = 15.6
+54 => 84     A7(167) => x 4 / 30  = 22.2  82(130) => x 2 / 15 = 17.3
+50 => 80     A3(163) => x 4 / 30  = 21.7  72(114) => x 2 / 15 = 15.2
+56 => 86     AD(173) => x 4 / 30  = 23.0  91(145) => x 2 / 15 = 19.3
+
+9. bluetoothctl
+
+https://wiki.gentoo.org/wiki/Bluetooth
+
+Start bluetoothctl:
+user $bluetoothctl
+
+List the available controllers:
+[bluetooth]#list
+
+Display information about a controller:
+[bluetooth]#show controller_mac_address
+
+Set the default controller:
+[bluetooth]#select controller_mac_address
+
+Power on the controller:
+[bluetooth]#power on
+
+Enable the agent and set it as default:
+[bluetooth]#agent on
+[bluetooth]#default-agent
+
+Set the controller as discoverable (temporarily for 3 minutes) and pairable:
+[bluetooth]#discoverable on
+[bluetooth]#pairable on
+
+Scan for devices:
+[bluetooth]#scan on
+
+Put the device into pairing mode. This generally involves pressing a button or a combinations of buttons, usually for several seconds.
+
+Discover the device MAC address:
+[bluetooth]#devices
+
+Pair with the device:
+[bluetooth]#pair device_mac_address
+
+Enter the PIN if prompted:
+[agent]PIN code: ####
+
+Allow the service authorization if requested:
+[agent]Authorize service service_uuid (yes/no): yes
+
+Trust the device:
+[bluetooth]#trust device_mac_address
+
+Connect to the device:
+[bluetooth]#connect device_mac_address
+
+Display information about the device:
+[bluetooth]#info device_mac_address
+
+The device is now paired:
+[bluetooth]#quit
