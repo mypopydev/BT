@@ -1,0 +1,68 @@
+1.
+
+[88:C2:55:BC:73:AF][LE]> connect
+Attempting to connect to 88:C2:55:BC:73:AF
+Connection successful
+[88:C2:55:BC:73:AF][LE]> primary 
+attr handle: 0x0001, end grp handle: 0x000b uuid: 00001800-0000-1000-8000-00805f9b34fb
+attr handle: 0x000c, end grp handle: 0x000f uuid: 00001801-0000-1000-8000-00805f9b34fb
+attr handle: 0x0010, end grp handle: 0x001b uuid: 00001808-0000-1000-8000-00805f9b34fb
+attr handle: 0x001c, end grp handle: 0xffff uuid: 0000180a-0000-1000-8000-00805f9b34fb
+Notification handle = 0x0012 value: 03 09 00 d8 07 09 02 15 21 00 88 ff 4b b0 39 11 11 
+Notification handle = 0x0012 value: 1e 78 00 50 07 5a 02 07 db 00 00 00 00 19 3c 11 01 00 00 
+[88:C2:55:BC:73:AF][LE]> 
+(gatttool:15749): GLib-WARNING **: Invalid file descriptor.
+
+[88:C2:55:BC:73:AF][LE]> connect
+Attempting to connect to 88:C2:55:BC:73:AF
+Connection successful
+Notification handle = 0x0012 value: 03 09 00 d8 07 09 02 16 03 00 88 ff 35 b0 39 11 11
+                                                                        2.9 ml
+Notification handle = 0x0012 value: 1e 78 00 50 07 5a 02 07 db 00 00 00 00 22 3c 11 01 00 00 
+[88:C2:55:BC:73:AF][LE]> primary
+attr handle: 0x0001, end grp handle: 0x000b uuid: 00001800-0000-1000-8000-00805f9b34fb
+attr handle: 0x000c, end grp handle: 0x000f uuid: 00001801-0000-1000-8000-00805f9b34fb
+attr handle: 0x0010, end grp handle: 0x001b uuid: 00001808-0000-1000-8000-00805f9b34fb
+attr handle: 0x001c, end grp handle: 0xffff uuid: 0000180a-0000-1000-8000-00805f9b34fb
+
+
+2.
+
+[88:C2:55:BC:73:AF][LE]> connect
+Attempting to connect to 88:C2:55:BC:73:AF
+Connection successful
+[88:C2:55:BC:73:AF][LE]> primary 
+attr handle: 0x0001, end grp handle: 0x000b uuid: 00001800-0000-1000-8000-00805f9b34fb
+attr handle: 0x000c, end grp handle: 0x000f uuid: 00001801-0000-1000-8000-00805f9b34fb
+attr handle: 0x0010, end grp handle: 0x001b uuid: 00001808-0000-1000-8000-00805f9b34fb
+attr handle: 0x001c, end grp handle: 0xffff uuid: 0000180a-0000-1000-8000-00805f9b34fb
+Notification handle = 0x0012 value: 03 09 00 d8 07 09 02 15 21 00 88 ff 4b b0 39 11 11
+                                                                        4.2ml
+Notification handle = 0x0012 value: 1e 78 00 50 07 5a 02 07 db 00 00 00 00 19 3c 11 01 00 00 
+[88:C2:55:BC:73:AF][LE]> 
+(gatttool:15749): GLib-WARNING **: Invalid file descriptor.
+
+
+gatttool -b 88:C2:55:BC:73 --char-write-req --handle=0x0012 --value=0100 --listen
+
+
+[88:C2:55:BC:72:C2][LE]> char-write-req 0x1b 0100
+Error: Characteristic Write Request failed: Attribute requires authentication before read/write
+
+[88:C2:55:BC:72:C2][LE]> char-write-req 0x13 0100
+Error: Characteristic Write Request failed: Attribute requires authentication before read/write
+[88:C2:55:BC:72:C2][LE]>
+
+[88:C2:55:BC:72:C2][LE]> char-read-uuid 0x2800
+handle: 0x0001 	 value: 00 18 
+handle: 0x000c 	 value: 01 18 
+handle: 0x0010 	 value: 08 18 
+handle: 0x001c 	 value: 0a 18
+
+
+4.2 (4.1) / 2.9 = 1.414
+
+74 (4b)/ 53 (35) = 1.415
+
+(x * 6 - 24) / 100.0 == Value
+
